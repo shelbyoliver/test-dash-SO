@@ -19,5 +19,22 @@ library(leaflet)
 library(spatstat)
 library(maptools)
 library(corrplot)
+
+#read in the data
+oil<-read.csv("oil_spills.csv")
+```
+
+##Column graph to look at oil spills in Texas
+
+```{r}
+oil_df<-oil %>% 
+  filter(`Accident.State`=='TX'&`Accident.Year`,2017) %>% #have to use special ` to call the column when it has a space in the name
+  group_by(`Accident.Year`) %>% 
+  summarise(Loss = sum(Net.Loss..Barrels.))
+
+colnames(oil_df)<- c("YR","OilLoss")
+
+#make the column graph
+ggplot(oil_df, aes(x = YR, y = OilLoss))+geom_col()+theme_classic()
 ```
 
