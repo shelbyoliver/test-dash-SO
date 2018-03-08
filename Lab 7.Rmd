@@ -38,3 +38,25 @@ colnames(oil_df)<- c("YR","OilLoss")
 ggplot(oil_df, aes(x = YR, y = OilLoss))+geom_col()+theme_classic()
 ```
 
+
+## Convert oil spill information into spatial information. Make leaflet plot of oilspills in Texas in 2016
+
+```{r}
+oil_loc<-oil %>% 
+  filter(`Accident.State`=="TX"&`Accident.Year`==2016) %>% 
+  select(Latitude, Longitude, Net.Loss..Barrels.)
+
+colnames(oil_loc)<- c( "lat","long","oil_loss")
+
+#need to tell R that you are working with spatial information. currently, R is just seeing this information as a dataframe. Change it so that it turns into spatial data.
+
+oil_spatial<- st_as_sf(oil_loc, coords=c('long','lat'), crs=4326)
+
+#now make a leaflet map of the data
+
+leaflet(oil_spatial) %>% 
+  addTiles() %>%  #add a basemap
+  addMarkers()
+
+```
+
