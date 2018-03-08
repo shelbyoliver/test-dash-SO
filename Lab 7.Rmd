@@ -60,3 +60,44 @@ leaflet(oil_spatial) %>%
 
 ```
 
+## tmap plot with the Texas state shapefile
+
+```{r}
+states<- st_read( dsn = ".", layer = 'states') 
+texas_bord<-states %>% 
+  filter(STATE_NAME == "Texas") %>% 
+  st_transform(4326)
+st_crs(texas_bord)#tells you your coordinate reference system
+
+plot(texas_bord)
+tm_shape(texas_bord)+
+  tm_polygons()+
+  tm_shape(oil_spatial)+
+  tm_dots(size = 0.3)
+
+```
+
+
+###Convert the data to spatial points patterns with combination of point data and the bounding window
+
+##Does this point pattern follow csr? (Is the distribution of oil spills in TX spatially random or not?) Use point pattern analysis
+
+```{r}
+#convert back from simple features to a dataframe
+
+spill_sp<-as(oil_spatial, "Spatial")
+spill_ppp<-as(spill_sp, "ppp")#convert from dataframe to the point pattern
+
+texas_spatial<-as(texas_bord, "Spatial")
+texas_outerwindow<- as(texas_spatial, "owin")#create spatial window to bound the point pattern analysis
+
+all_ppp<-ppp(spill_ppp$x, spill_ppp$y, window = texas_outerwindow)
+
+```
+
+## A density plot:
+
+```{r}
+plot(density(all_ppp), sigma=0.4)#sigma is important and can change your interpretation of your results, You need to select a sigma value (bandwidth) that makes sense for the data
+```
+
