@@ -101,3 +101,5 @@ all_ppp<-ppp(spill_ppp$x, spill_ppp$y, window = texas_outerwindow)
 plot(density(all_ppp), sigma=0.4)#sigma is important and can change your interpretation of your results, You need to select a sigma value (bandwidth) that makes sense for the data
 ```
 
+### Quadrat test for spatial evenness
+oil_qt<- quadrate.test(all_ppp, nx = 5, ny = 5)#ny and nx specify the number of regions in either direction
